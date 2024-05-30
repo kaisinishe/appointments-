@@ -94,6 +94,7 @@ Open your browser and navigate to:
 https://your-ngrok-subdomain.ngrok-free.app
 ```
 Development
+
 Running Locally
 
 You can also run the application locally using a virtual environment:
