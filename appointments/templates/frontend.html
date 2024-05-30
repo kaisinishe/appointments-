@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Creation Interface</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            color: #333;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        form {
+            background: #fff;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            animation: slideIn 1s ease-in-out;
+            position: relative;
+            z-index: 1;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Raleway', sans-serif;
+        }
+        input[type="submit"] {
+            background-color: #333;
+            color: white;
+            padding: 0.75em 1.5em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            font-family: 'Raleway', sans-serif;
+            margin-top: 1em; /* Added margin to create space between the button and the form fields */
+        }
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(50, 50, 50, 0.2);
+            animation: float 15s infinite ease-in-out;
+        }
+        .event-list {
+            width: 90%;
+            max-width: 600px;
+            margin-top: 20px;
+            background: #fff;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: slideIn 1s ease-in-out;
+            overflow-y: auto;
+            max-height: 50vh;
+        }
+        .event-list h2 {
+            text-align: center;
+        }
+        .event-item {
+            border-bottom: 1px solid #ddd;
+            padding: 0.5em 0;
+        }
+        .event-item:last-child {
+            border-bottom: none;
+        }
+        .week-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-100px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            form {
+                padding: 1.5em;
+            }
+            .event-list {
+                padding: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Create Event</h1>
+        <form id="eventForm">
+            <label for="summary">Comments:</label>
+            <input type="text" id="summary" name="summary" required>
+            <label for="start_time">Start Time:</label>
+            <input type="text" id="start_time" name="start_time" required>
+            <input type="hidden" id="end_time" name="end_time" required>
+            <input type="hidden" id="requestor_id" name="requestor_id" value="REQUESTOR_ID_PLACEHOLDER">
+            <input type="submit" value="Create Event">
+        </form>
+    </div>
+
+    <div class="event-list">
+        <h2>Calendar Events</h2>
+        <div id="events"></div>
+        <div class="week-navigation">
+            <button id="prevWeekBtn">Last Week</button>
+            <button id="nextWeekBtn">Next Week</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        let currentWeekStart = new Date();
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+        let currentWeekEnd = new Date(currentWeekStart);
+        currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
+
+        // Initialize flatpickr on the start_time input
+        const flatpickrInstance = flatpickr("#start_time", {
+            enableTime: true,
+            dateFormat: "d/m/Y H:i",
+            time_24hr: true,
+            locale: {
+                firstDayOfWeek: 1 // start week on Monday
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    // Set end_time to be 1 hour after start_time
+                    const endTime = new Date(selectedDates[0].getTime() + 60 * 60 * 1000);
+                    document.getElementById('end_time').value = endTime.toISOString();
+                }
+            }
+        });
+
+        document.getElementById('eventForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(event.target); // Get form data
+            const jsonData = {};
+            formData.forEach((value, key) => { // Convert form data to JSON
+                jsonData[key] = value;
+            });
+
+            // Send POST request with JSON data
+            const response = await fetch('/add_event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                alert(responseData.message); // Display success message
+                loadEvents(); // Reload events after adding new one
+            } else {
+                const errorMessage = await response.text();
+                alert(errorMessage); // Display error message
+            }
+        });
+
+        async function loadEvents() {
+            const requestorId = document.getElementById('requestor_id').value;
+            const startStr = currentWeekStart.toISOString();
+            const endStr = currentWeekEnd.toISOString();
+
+            const response = await fetch(`/events/${requestorId}?start=${startStr}&end=${endStr}`);
+            if (response.ok) {
+                const data = await response.json();
+                const eventsDiv = document.getElementById('events');
+                eventsDiv.innerHTML = ''; // Clear existing events
+                flatpickrInstance.clear(); // Clear existing flatpickr events
+
+                if (data.events.length === 0) {
+                    eventsDiv.innerHTML = '<p>No events found for this week.</p>';
+                } else {
+                    data.events.forEach(event => {
+                        const startDate = new Date(event.start_time);
+                        flatpickrInstance.setDate(startDate, true, "Y-m-d H:i");
+
+                        const eventItem = document.createElement('div');
+                        eventItem.classList.add('event-item');
+                        eventItem.innerHTML = `
+                            <strong>${event.summary}</strong><br>
+                            ${startDate.toLocaleDateString('en-GB')} ${startDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} - 
+                            ${new Date(event.end_time).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                        `;
+                        eventsDiv.appendChild(eventItem);
+                    });
+                }
+            } else {
+                const errorMessage = await response.text();
+                alert(errorMessage); // Display error message
+            }
+        }
+
+        document.getElementById('nextWeekBtn').addEventListener('click', () => {
+            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+            currentWeekEnd.setDate(currentWeekEnd.getDate() + 7);
+            loadEvents();
+        });
+
+        document.getElementById('prevWeekBtn').addEventListener('click', () => {
+            currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+            currentWeekEnd.setDate(currentWeekEnd.getDate() - 7);
+            loadEvents();
+        });
+
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            const size = Math.random() * 60 + 20 + 'px';
+            bubble.style.width = size;
+            bubble.style.height = size;
+            bubble.style.left = Math.random() * 100 + 'vw';
+            bubble.style.top = Math.random() * 100 + 'vh';
+            bubble.style.animationDuration = Math.random() * 10 + 5 + 's';
+
+            // Match bubble colors to the color palette of the site
+            const colors = ['rgba(50, 50, 50, 0.1)', 'rgba(100, 100, 100, 0.1)', 'rgba(150, 150, 150, 0.1)'];
+            bubble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            document.body.appendChild(bubble);
+
+            setTimeout(() => {
+                bubble.remove();
+            }, 15000); // Remove bubble after animation
+        }
+
+        setInterval(createBubble, 1000); // Create bubbles at intervals
+
+        // Load events on page load
+        document.addEventListener('DOMContentLoaded', loadEvents);
+    </script>
+</body>
+</html>
