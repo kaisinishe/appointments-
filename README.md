@@ -105,18 +105,19 @@ source venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
-Testing
-To run tests, use:
 
-```sh
-pytest
-```
 Contributing
+
 Fork the repository.
+
 Create a new branch (git checkout -b feature-branch).
+
 Make your changes.
+
 Commit your changes (git commit -am 'Add new feature').
+
 Push to the branch (git push origin feature-branch).
+
 Create a new Pull Request.
 
 
