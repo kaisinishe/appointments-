@@ -39,9 +39,6 @@ This is a FastAPI application for managing calendar events with Google Calendar 
 ```
 
 
-bash
-Copy code
-
 ## Getting Started
 
 ### 1. Clone the Repository
@@ -49,6 +46,7 @@ Copy code
 ```sh
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
+```
 2. Obtain Redis Cloud Credentials
 Sign up for a Redis Cloud account at Redis Cloud.
 Create a new Redis database.
@@ -57,9 +55,10 @@ Note down the Redis host, port, and password.
 Sign up for an Ngrok account at Ngrok.
 Get your authtoken from the Ngrok dashboard.
 Run the following command to set up Ngrok with your authtoken:
-sh
-Copy code
+```sh
+
 ngrok authtoken YOUR_AUTHTOKEN
+```
 4. Set Up Google OAuth2 Credentials
 Go to the Google Cloud Console.
 Create a new project.
@@ -70,43 +69,44 @@ Download the credentials.json file and place it in the project root directory.
 Create a .env file in the project root directory and add the following environment variables:
 
 env
-Copy code
+```sh
 REDIS_HOST=your-redis-host
 REDIS_PORT=your-redis-port
 REDIS_PASSWORD=your-redis-password
 NGROK_TARGET_URL=https://your-ngrok-subdomain.ngrok-free.app/callback/target
 NGROK_REQUESTOR_URL=https://your-ngrok-subdomain.ngrok-free.app/callback/requestor
+```
 6. Build and Run the Docker Container
 Build the Docker Image
-sh
-Copy code
+```sh
 docker build -t fastapi_app .
+```
 Run the Docker Container
-sh
-Copy code
+```sh
 docker run -d -p 8000:8000 --name fastapi_app --env-file .env fastapi_app
+```
 7. Access the Application
 Open your browser and navigate to:
 
-sh
-Copy code
+```sh
 https://your-ngrok-subdomain.ngrok-free.app
+```
 Development
 Running Locally
 You can also run the application locally using a virtual environment:
 
-sh
-Copy code
+```sh
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload
+```
 Testing
 To run tests, use:
 
-sh
-Copy code
+```sh
 pytest
+```
 Contributing
 Fork the repository.
 Create a new branch (git checkout -b feature-branch).
