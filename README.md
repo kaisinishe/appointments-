@@ -2,7 +2,7 @@
 
 This is a FastAPI application for managing calendar events with Google Calendar integration, Redis Cloud for data storage, and Ngrok for public access. The application allows users to book appointments, which automatically appear both in the workers' and requestors google calendars. 
 
-![Alt text](images/Screenshot3.png)
+![Alt text](appointments/images/Screenshot3.png)
 
 ## Features
 
