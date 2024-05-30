@@ -49,11 +49,11 @@ This is a FastAPI application for managing calendar events with Google Calendar 
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
 ```
-2. Obtain Redis Cloud Credentials
+### 2. Obtain Redis Cloud Credentials
 Sign up for a Redis Cloud account at Redis Cloud.
 Create a new Redis database.
 Note down the Redis host, port, and password.
-3. Obtain Ngrok Authtoken
+### 3. Obtain Ngrok Authtoken
 Sign up for an Ngrok account at Ngrok.
 Get your authtoken from the Ngrok dashboard.
 Run the following command to set up Ngrok with your authtoken:
@@ -61,13 +61,13 @@ Run the following command to set up Ngrok with your authtoken:
 
 ngrok authtoken YOUR_AUTHTOKEN
 ```
-4. Set Up Google OAuth2 Credentials
+### 4. Set Up Google OAuth2 Credentials
 Go to the Google Cloud Console.
 Create a new project.
 Enable the "Google Calendar API" for the project.
 Create OAuth 2.0 credentials.
 Download the credentials.json file and place it in the project root directory.
-5. Create the .env File
+### 5. Create the .env File
 Create a .env file in the project root directory and add the following environment variables:
 
 env
@@ -78,7 +78,7 @@ REDIS_PASSWORD=your-redis-password
 NGROK_TARGET_URL=https://your-ngrok-subdomain.ngrok-free.app/callback/target
 NGROK_REQUESTOR_URL=https://your-ngrok-subdomain.ngrok-free.app/callback/requestor
 ```
-6. Build and Run the Docker Container
+### 6. Build and Run the Docker Container
 Build the Docker Image
 ```sh
 docker build -t fastapi_app .
@@ -87,7 +87,7 @@ Run the Docker Container
 ```sh
 docker run -d -p 8000:8000 --name fastapi_app --env-file .env fastapi_app
 ```
-7. Access the Application
+### 7. Access the Application
 Open your browser and navigate to:
 
 ```sh
