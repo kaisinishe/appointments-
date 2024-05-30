@@ -19,6 +19,7 @@ This is a FastAPI application for managing calendar events with Google Calendar 
 
 ## Project Tree
 
+```plaintext
 ├── .dockerignore
 ├── .env
 ├── Dockerfile
@@ -28,13 +29,15 @@ This is a FastAPI application for managing calendar events with Google Calendar 
 ├── redis_db.py
 ├── requirements.txt
 ├── static/
-│ └── favicon.ico
+│   └── favicon.ico
 ├── templates/
-│ ├── frontend.html
-│ ├── no_pending_requestors.html
-│ ├── target_confirmation.html
-│ └── waiting_page.html
+│   ├── frontend.html
+│   ├── no_pending_requestors.html
+│   ├── target_confirmation.html
+│   └── waiting_page.html
 └── .venv/
+```
+
 
 bash
 Copy code
